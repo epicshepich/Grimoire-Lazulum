@@ -12,9 +12,9 @@ function scramble(word){
 
 function multiscramble(word,n){
     var max_permutations = unique_perms(word)
-    var iters = n-1
+    var iters = n
     if(n>max_permutations){
-        iters = max_permutations-1
+        iters = max_permutations
     }
 
     var output = []
