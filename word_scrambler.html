@@ -1,0 +1,17 @@
+<html><input id="scramble_word" placeholder="word to scramble"></input><input id="scramble_n" value="100"></input><button id="scramble_button">Scramble</button><br />
+
+<div id="scramble_results"></div>
+
+
+<script src="word_scrambler.js"></script>
+<script>
+function id(str){
+    return document.getElementById(str)
+}
+
+id("scramble_button").addEventListener("click",function(){
+    var results = multiscramble(id("scramble_word").value,id("scramble_n").value).join("\n")
+    id("scramble_results").innerText = results
+})
+</script>
+</html>
