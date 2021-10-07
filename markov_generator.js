@@ -1,92 +1,128 @@
-var stx = String.fromCharCode(2);
-var etx = String.fromCharCode(3);
+function MarkovGenerator(type="words"){
 
-function build_chain(source){
-    var words = source.toLowerCase().split(" ");
-    for(var i=0;i<words.length;i++){
-        words[i] = stx + words[i] + etx;
-        //Add the Start Text and End Text ASCII characters on either end of
-        //the word as "sentinels".
+    var stx = String.fromCharCode(2);
+    var etx = String.fromCharCode(3);
+
+    this.node_delimiter="";
+    if(type=="words"){
+        this.node_delimieter = "";
+    } else if(type=="sentences"){
+        this.node_delimiter = " ";
     }
 
-    var chain = {};
+    this.fit = function(raw_source){
+        //Itemize the source by splitting it into an array of exmples, which
+        //consist of arrays of nodes.
+        var source = [];
+        if(type=="words"){
+            source = raw_source.toLowerCase().split(" ");
+        } else if (type=="sentences"){
+            source = raw_source.toLowerCase().split(". ");
+        }
 
-    for(word of words){
-        for(var j=0; j<word.length;j++){
-            if(word[j]==etx){
-                //End Text character does not have a successor node, and
-                //including this clause prevents the algorithm from out-of-bounds
-                //indexing the string.
-                continue;
-            } else {
-                if(!(word[j] in chain)){
-                    chain[word[j]] = {
-                        "successors":[],
-                        "weights":[]
-                    };
-                }
+        for(i=0;i<source.length;i++){
+            source[i] = source[i].split(this.node_delimiter);
+        }
 
-                if(chain[word[j]].successors.indexOf(word[j+1])<0){
-                    //Make space for new successor nodes.
-                    chain[word[j]].successors.push(word[j+1]);
-                    chain[word[j]].weights.push(0);
+
+        //Index the unique nodes.
+        var nodes = [];
+        for(example of source){
+            for(node of example){
+                if(nodes.indexOf(node)<0){
+                    nodes.push(node);
                 }
-                successor_index = chain[word[j]].successors.indexOf(word[j+1]);
-                chain[word[j]].weights[successor_index] += 1;
-                //Increase the raw weight of the successor node by 1.
             }
         }
-    }
-
-    for(node in chain){
-        chain[node].cdf = get_cdf(chain[node].weights);
-    }
-
-    return chain;
-}
-
-function get_cdf(array){
-    norm = 0;
-    for(item of array){
-        norm += item;
-    }
-
-    var cdf = [];
-    var running_total = 0;
-    for(item of array){
-        running_total += item/norm;
-        cdf.push(running_total);
-    }
-    return cdf;
-}
 
 
-function markov_generate(chain){
-    var pointer = stx;
-    var output = "";
-    while(pointer !== etx){
-        p = Math.random();
+        //Build a Markov Chain from the itemized input.
+        nodes.push(stx);
+        nodes.push(etx);
 
-        next_pointer = chain[pointer].successors[0];
-        for(i=0;i<chain[pointer].successors.length;i++){
-            if(p<chain[pointer].cdf[i]){
-                next_pointer = chain[pointer].successors[i];
-                break;
-            } else {
-                continue;
+        for(var i=0;i<source.length;i++){
+            source[i].unshift(stx);
+            source[i].push(etx);
+            //Add the Start Text and End Text ASCII characters on either end of
+            //the example as "sentinels".
+        }
+
+        var chain = {};
+
+        for(node of nodes){
+            chain[node] = {
+                    "successors":[...nodes],
+                    "weights":Array(nodes.length).fill(0)
+                };
+            //Create nodes in the chain that contain a list of successor nodes
+            //with associated connection probabilities.
+        }
+
+        for(example of source){
+            var prev = null;
+            for(node of example){
+                if(node==stx){
+                    //End Text character does not have a predecessor node.
+                } else {
+                    successor_index = chain[prev].successors.indexOf(node);
+                    chain[prev].weights[successor_index] += 1;
+                    //For every node, increase the strength of the connection from
+                    //its predecessor by 1.
+                }
+                prev = node;
             }
         }
-        pointer = next_pointer;
-        output += pointer;
-    }
-    output = output.replace(etx,"");
-    return output;
-}
 
-function multimarkov_generate(chain,n){
-    outputs = [];
-    for(k=0;k<n;k++){
-        outputs.push(markov_generate(chain));
+        for(node in chain){
+            //Compute cumultaive distributions.
+            var norm = 0;
+            for(weight of chain[node].weights){
+                norm += weight;
+            }
+
+            chain[node].cdf = [];
+            var running_total = 0;
+            for(weight of chain[node].weights){
+                running_total += weight/norm;
+                chain[node].cdf.push(running_total);
+            }
+        }
+
+        this.chain = chain;
     }
-    return outputs;
+
+    this.generate = function(N=1,min=0,max=Infinity){
+        outputs = [];
+        for(k=0;k<N;k++){
+            var pointer = stx;
+            var output = [];
+            while(pointer !== etx){
+                p = Math.random();
+
+                next_pointer = this.chain[pointer].successors[0];
+                for(i=0;i<this.chain[pointer].successors.length;i++){
+                    if(p<this.chain[pointer].cdf[i]){
+                        next_pointer = this.chain[pointer].successors[i];
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                pointer = next_pointer;
+                output.push(pointer);
+            }
+            output.pop();
+            //Last element generated will be etx, which we shall remove.
+            if(output.length<min || output.length>max){
+                //Loop again if we get an unacceptable output.
+                k-=1;
+            } else {
+                outputs.push(output.join(this.node_delimiter));
+            }
+
+        }
+        return outputs;
+    }
+
+
 }

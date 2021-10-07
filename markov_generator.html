@@ -1,5 +1,11 @@
 <html>
-<input id="markov_n" value="100"></input><button id="generate_button">Generate</button><br />
+<button id="generate_button">Generate</button>
+<label>N = </label><input id="markov_n" value="100"></input><br />
+<input type="radio" name="markov_type" value="words" checked="true">Words</input>
+<input type="radio" name="markov_type" value="sentences">Sentences</input><br />
+<label>At least </label><input id="markov_min" value="0"><label> subunits long</label><br />
+<label>No more than </label><input id="markov_max" value="Infinity"><label> subunits</label><br />
+<label>From source:</label><br />
 <textarea id="markov_source"></textarea>
 <div id="markov_results"></div>
 
@@ -8,13 +14,62 @@
 
 <script>
 function id(str){
-    return document.getElementById(str)
+    return document.getElementById(str);
 }
 
-id("generate_button").addEventListener("click",function(){
-    var markov_chain = build_chain(id("markov_source").value);
-    var results = multimarkov_generate(markov_chain,id("markov_n").value)
-    id("markov_results").innerText = results.join("\n")
-})
+var prev_markov = {
+    "min" : 0,
+    "max" : Infinity,
+    "type" : "",
+    "source" : "",
+    "generator" : null
+}
+
+function run_markov_generator(){
+    var markov_source = id("markov_source").value;
+    if(document.getElementsByName("markov_type")[0].checked){
+        var markov_type = "words";
+    } else {
+        var markov_type = "sentences";
+    }
+
+    var markov_min = parseInt(id("markov_min").value);
+    if(isNaN(markov_min)){
+        markov_min = 0;
+    }
+    var markov_max = parseInt(id("markov_max").value);
+    if(isNaN(markov_max)){
+        markov_max = Infinity;
+    }
+    if(markov_min>markov_max){
+        markov_max = Infinity;
+        markov_min = 0;
+    }
+
+
+    var generator = new MarkovGenerator(type=markov_type);
+    if(markov_type == prev_markov.type && markov_source == prev_markov.source){
+        generator = prev_markov.generator;
+    } else {
+        generator.fit(id("markov_source").value);
+    }
+
+    var generated = generator.generate(N=id("markov_n").value,min=markov_min,max=markov_max)
+
+    if(markov_type == "words"){
+        id("markov_results").innerText = generated.join("\n");
+    } else if(markov_type == "sentences"){
+        id("markov_results").innerText = generated.join(". ");
+    }
+
+    prev_markov.generator = generator;
+    prev_markov.type = markov_type;
+    prev_markov.source = markov_source;
+    prev_markov.min = markov_min;
+    prev_markov.max = markov_max;
+
+}
+
+id("generate_button").addEventListener("click",run_markov_generator)
 </script>
 </html>
