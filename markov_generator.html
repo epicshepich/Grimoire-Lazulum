@@ -1,0 +1,20 @@
+<html>
+<input id="markov_n" value="100"></input><button id="generate_button">Generate</button><br />
+<textarea id="markov_source"></textarea>
+<div id="markov_results"></div>
+
+
+<script src="markov_generator.js"></script>
+
+<script>
+function id(str){
+    return document.getElementById(str)
+}
+
+id("generate_button").addEventListener("click",function(){
+    var markov_chain = build_chain(id("markov_source").value);
+    var results = multimarkov_generate(markov_chain,id("markov_n").value)
+    id("markov_results").innerText = results.join("\n")
+})
+</script>
+</html>
