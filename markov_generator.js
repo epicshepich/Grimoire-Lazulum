@@ -65,8 +65,6 @@ function MarkovGenerator(type="words"){
         }
         //Grow existing nodes' arrays to include new nodes.
 
-        console.log(this.chain);
-        console.log(this.nodes);
 
 
         for(example of source){
