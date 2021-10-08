@@ -3,60 +3,71 @@ function MarkovGenerator(type="words"){
     var stx = String.fromCharCode(2);
     var etx = String.fromCharCode(3);
 
+    this.nodes = new Set();
+    this.chain = {};
+
     this.node_delimiter="";
     if(type=="words"){
         this.node_delimieter = "";
+        this.example_delimiter = " ";
     } else if(type=="sentences"){
         this.node_delimiter = " ";
+        this.example_delimiter = ". ";
     }
 
-    this.fit = function(raw_source){
+    this.train = function(raw_source){
         //Itemize the source by splitting it into an array of exmples, which
-        //consist of arrays of nodes.
-        var source = [];
-        if(type=="words"){
-            source = raw_source.toLowerCase().split(" ");
-        } else if (type=="sentences"){
-            source = raw_source.toLowerCase().split(". ");
-        }
-
+        //consist of arrays of nodes
+        var source = raw_source.toLowerCase().split(this.example_delimiter);
         for(i=0;i<source.length;i++){
             source[i] = source[i].split(this.node_delimiter);
-        }
-
-
-        //Index the unique nodes.
-        var nodes = [];
-        for(example of source){
-            for(node of example){
-                if(nodes.indexOf(node)<0){
-                    nodes.push(node);
-                }
-            }
-        }
-
-
-        //Build a Markov Chain from the itemized input.
-        nodes.push(stx);
-        nodes.push(etx);
-
-        for(var i=0;i<source.length;i++){
             source[i].unshift(stx);
             source[i].push(etx);
             //Add the Start Text and End Text ASCII characters on either end of
             //the example as "sentinels".
         }
 
-        var chain = {};
+        //Index the unique nodes.
+        var raw_nodes = raw_source.toLowerCase().replaceAll(this.example_delimiter,this.node_delimiter);
+        //Convert the raw source to a single example by replacing example delimiters with node delimiters.
+        raw_nodes = raw_nodes.split(this.node_delimiter);
+        //Split the meta-example.
+        raw_nodes.unshift(stx);
+        raw_nodes.unshift(etx);
+        //Add in STX and ETX for the first call of `train`.
+        var new_nodes = new Set(raw_nodes);
+        new_nodes = new Set([...raw_nodes].filter(x => !this.nodes.has(x)));
+        //Keep track of the new nodes that are added by this call of `train()`.
 
-        for(node of nodes){
-            chain[node] = {
-                    "successors":[...nodes],
-                    "weights":Array(nodes.length).fill(0)
+
+        for(node of new_nodes){
+            this.chain[node] = {
+                    "successors":[...this.nodes],
+                    "weights":Array(this.nodes.size).fill(0)
                 };
-            //Create nodes in the chain that contain a list of successor nodes
-            //with associated connection probabilities.
         }
+        //Add new nodes to chain.
+
+        function add_successor(node,successor){
+            node.successors.push(successor);
+            node.weights.push(0);
+        }
+
+        new_nodes.forEach(node => this.nodes.add(node));
+        //Add new unique nodes.
+
+        for(node of this.nodes){
+            if(node==etx){
+                continue;
+            } else {
+                new_nodes.forEach(successor => add_successor(this.chain[node],successor));
+            }
+        }
+        //Grow existing nodes' arrays to include new nodes.
+
+        console.log(this.chain);
+        console.log(this.nodes);
+
 
         for(example of source){
             var prev = null;
@@ -64,8 +75,8 @@ function MarkovGenerator(type="words"){
                 if(node==stx){
                     //End Text character does not have a predecessor node.
                 } else {
-                    successor_index = chain[prev].successors.indexOf(node);
-                    chain[prev].weights[successor_index] += 1;
+                    successor_index = this.chain[prev].successors.indexOf(node);
+                    this.chain[prev].weights[successor_index] += 1;
                     //For every node, increase the strength of the connection from
                     //its predecessor by 1.
                 }
@@ -73,22 +84,21 @@ function MarkovGenerator(type="words"){
             }
         }
 
-        for(node in chain){
+        for(node in this.chain){
             //Compute cumultaive distributions.
             var norm = 0;
-            for(weight of chain[node].weights){
+            for(weight of this.chain[node].weights){
                 norm += weight;
             }
 
-            chain[node].cdf = [];
+            this.chain[node].cdf = [];
             var running_total = 0;
-            for(weight of chain[node].weights){
+            for(weight of this.chain[node].weights){
                 running_total += weight/norm;
-                chain[node].cdf.push(running_total);
+                this.chain[node].cdf.push(running_total);
             }
         }
 
-        this.chain = chain;
     }
 
     this.generate = function(N=1,min=0,max=Infinity){

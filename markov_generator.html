@@ -51,7 +51,7 @@ function run_markov_generator(){
     if(markov_type == prev_markov.type && markov_source == prev_markov.source){
         generator = prev_markov.generator;
     } else {
-        generator.fit(id("markov_source").value);
+        generator.train(id("markov_source").value);
     }
 
     var generated = generator.generate(N=id("markov_n").value,min=markov_min,max=markov_max)
