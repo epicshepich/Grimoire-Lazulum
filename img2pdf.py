@@ -51,7 +51,7 @@ def img2pdf(image_list: list, destination: str) -> None:
 
 def main():
     """Default behaviour if this module is run as a script"""
-    images = tk.filedialog.askopenfilenames(        )
+    images = tk.filedialog.askopenfilenames()
     #Graphically select input image files
     destination_path = tk.filedialog.asksaveasfilename(
         defaultextension="pdf",
