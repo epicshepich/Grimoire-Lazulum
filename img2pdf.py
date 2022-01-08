@@ -11,10 +11,16 @@ def rgba2rgb(rgba: Image) -> Image:
     """This function converts images with an alpha channel (RGBA) to images
     without (RGB). RGBA images cannot be saved as PDF."""
     rgb = Image.new('RGB', rgba.size, (255, 255, 255))  # white background
-    rgb.paste(rgba, mask=rgba.split()[3])
+
+    if(len(rgba.split())>=4):
+        rgb.paste(rgba, mask=rgba.split()[3])
+        #Remove the alpha channel if there is one.
+    else:
+        rgb = rgba
+        #If there is no alpha channel, then just return the input image.
     return rgb
 
-def png2pdf(image_list: list, destination: str) -> None:
+def img2pdf(image_list: list, destination: str) -> None:
     """This function converts a list of images into a PDF.
 
     Arguments:
@@ -43,12 +49,9 @@ def png2pdf(image_list: list, destination: str) -> None:
         print("Select at least one image!")
 
 
-def main(:
+def main():
     """Default behaviour if this module is run as a script"""
-
-    images = tk.filedialog.askopenfilenames(
-        initialdir="Module "+str(module)
-        )
+    images = tk.filedialog.askopenfilenames(        )
     #Graphically select input image files
     destination_path = tk.filedialog.asksaveasfilename(
         defaultextension="pdf",
@@ -56,7 +59,7 @@ def main(:
         )
     #Graphically select output destination & file name
 
-    png2pdf(images,destination_path)
+    img2pdf(images,destination_path)
 
 if __name__ == "__main__":
     main()#change argument for each module
