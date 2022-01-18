@@ -1,0 +1,18 @@
+Speaker is a zombie
+summon
+    task speak
+        say "ugh"
+    bind
+bind
+
+
+Poker is a zombie
+summon
+    remember 0
+    task poke
+        shamble
+            remember moan 1
+            say moan
+        until remembering 10
+    animate
+animate

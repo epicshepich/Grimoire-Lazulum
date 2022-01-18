@@ -1,0 +1,25 @@
+n is a zombie
+summon
+remember 10
+bind
+
+factorial is a zombie
+summon
+    task factorial
+        remember factorial 1
+        taste remembering n 0
+        good
+            remember factorial 1
+        bad
+            shamble
+                remember factorial rend rend moan factorial 1 moan n
+                remember n moan n -1
+            until remembering n 0
+        spit
+
+    bind
+
+    task report
+        say moan factorial
+    animate
+animate

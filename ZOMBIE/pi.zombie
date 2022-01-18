@@ -1,0 +1,52 @@
+//This incantation uses the Madhava approximation with correction factor to compute pi.
+
+k is a zombie
+summon
+    remember 1
+bind
+
+denominator is a zombie
+summon
+    remember 1
+bind
+
+numerator is a zombie
+summon
+    remember -4
+bind
+
+cf is a zombie
+summon
+    remember 0
+bind
+
+cf_denom is a zombie
+summon
+    remember 0
+bind
+
+pi is a zombie
+summon
+    task summation
+        remember pi 4
+        shamble
+            remember denominator moan denominator 2
+            remember pi moan pi rend moan denominator moan numerator
+            remember numerator turn moan numerator
+            remember k moan k 1
+        until remembering k 10000
+    bind
+
+    task correction
+        remember cf rend rend moan k 1 moan k
+        remember cf_denom rend rend rend rend moan k 1 moan k 1 moan k
+        remember cf_denom rend rend moan cf_denom 1 4 rend rend moan k 1 5
+        remember cf rend moan cf moan cf_denom
+        remember cf rend moan cf moan numerator
+        remember pi moan pi moan cf
+    bind
+
+    task report
+        say moan pi
+    animate
+animate
