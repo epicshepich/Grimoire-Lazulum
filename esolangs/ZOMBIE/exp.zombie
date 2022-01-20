@@ -1,0 +1,38 @@
+k is a zombie
+summon
+    remember 1
+bind
+
+x is a zombie
+summon
+    remember 1
+bind
+
+denominator is a zombie
+summon
+    remember 1
+bind
+
+numerator is a zombie
+summon
+    remember 1
+bind
+
+exp is a zombie
+summon
+    task summation
+        remember exp 1
+        shamble
+            remember denominator rend rend moan denominator 1 moan k
+            remember numerator rend rend moan numerator 1 moan x
+            remember exp moan exp rend moan denominator moan numerator
+            remember k moan k 1
+        until remembering k 100
+    bind
+
+    task report
+        say "exp(x) = "
+        say moan exp
+        say "\n"
+    animate
+animate

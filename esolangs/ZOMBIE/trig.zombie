@@ -1,6 +1,6 @@
 theta is a zombie
 summon
-    remember 1
+    remember -3
 bind
 
 k is a zombie
@@ -30,18 +30,20 @@ summon
 
     task summation
         shamble
-            remember num rend rend rend rend moan num 1 moan num 1 moan num
+            remember num rend rend rend rend moan theta 1 moan theta 1 moan num
             remember num turn moan num
             remember k moan k 1
             remember denom rend rend moan k 1 moan denom
             remember k moan k 1
             remember denom rend rend moan k 1 moan denom
             remember sin moan sin rend moan denom moan num
-        until remembering k 1001
+        until remembering k 101
     bind
 
     task report
+        say "sin(x) = "
         say moan sin
+        say "\n"
     bind
 
 bind
@@ -58,18 +60,20 @@ summon
 
     task summation
         shamble
-            remember num rend rend rend rend moan num 1 moan num 1 moan num
+            remember num rend rend rend rend moan theta 1 moan theta 1 moan num
             remember num turn moan num
             remember k moan k 1
             remember denom rend rend moan k 1 moan denom
             remember k moan k 1
             remember denom rend rend moan k 1 moan denom
             remember cos moan cos rend moan denom moan num
-        until remembering k 1000
+        until remembering k 100
     bind
 
     task report
+        say "cos(x) = "
         say moan cos
+        say "\n"
     bind
 
 bind
@@ -87,6 +91,8 @@ summon
     bind
 
     task report
+        say "tan(x) = "
         say moan tan
+        say "\n"
     animate
 animate

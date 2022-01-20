@@ -1,18 +1,18 @@
-test is a demon
+test is a zombie
 summon
     task a
         say "a"
-    animate
+    bind
 
     task b
         say "b"
-    animate
+    bind
 
     task c
         say "c"
-    animate
+    bind
 
     task d
         say "d"
     animate
-bind
+animate

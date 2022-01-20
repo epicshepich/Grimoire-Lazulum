@@ -26,7 +26,7 @@ task_re = re.compile("task\s+([A-Za-z0-9_-]*)", re.I)
 remember_re = re.compile("remember\s+(.*)", re.I)
 
 string_re = re.compile('".*?"')
-integer_re = re.compile('[\-0-9\.]+')
+integer_re = re.compile('^-?\d*\.{0,1}\d+$')
 
 kill=False
 
@@ -73,11 +73,11 @@ class Entity:
       _thread.start_new_thread( self.taskthread, () )
 
    def taskthread(self):
-      pass; # overloaded by individual entities that have their own way of doing things
+      pass # overloaded by individual entities that have their own way of doing things
 
    def activate(self):
       self.active=True
-      self.runtasks
+      self.runtasks()
 
    def banish(self):
       self.active=False # task threads check for this and stop
@@ -448,15 +448,14 @@ class Environment:
                   if a.group(1) in self.entities:
                      die("line %d: entity '%s' is already defined." % (line_no, a.group(1)))
 
-                  if a.group(2).lower() in ['zombie', 'enslaved undead']: type=Zombie
-                  elif a.group(2).lower() in ['ghost', 'restless undead']: type=Ghost
-                  elif a.group(2).lower() in ['vampire', 'free-willed undead']: type=Vampire
-                  elif a.group(2).lower() == 'demon': type=Demon
-                  elif a.group(2).lower() == 'djinn': type=Djinn
+                  if a.group(2).lower() in ['zombie', 'enslaved undead']: currentEntity=Zombie()
+                  elif a.group(2).lower() in ['ghost', 'restless undead']: currentEntity=Ghost()
+                  elif a.group(2).lower() in ['vampire', 'free-willed undead']: currentEntity=Vampire()
+                  elif a.group(2).lower() == 'demon': currentEntity=Demon()
+                  elif a.group(2).lower() == 'djinn': currentEntity=Djinn()
                   else:
                      die("line %d: '%s' is not a valid entity type." % a.group(2))
                   currentEntityName = a.group(1)
-                  currentEntity = type()
                   currentEntity.name = currentEntityName
                   line_no += 1
                   inEntity = True
@@ -478,10 +477,10 @@ class Environment:
                   if lines[line_no].lower() in ['bind', 'animate']:
                      currentTask.active = lines[line_no].lower() == 'animate'
                      currentTask.entity = currentEntity
-                     currentEntity.tasks += [currentTask]
+                     currentEntity.tasks.append(currentTask)
                      break
                   else:
-                     currentTask.lines += [lines[line_no]]
+                     currentTask.lines.append(lines[line_no])
 
             elif b:
                #default value
