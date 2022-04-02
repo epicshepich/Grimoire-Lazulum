@@ -1,0 +1,51 @@
+<html>
+<head>
+    <script src="scripts/vendor/jquery-3.6.0.min.js"></script>
+    <script src="scripts/vendor/FileSaver.min.js"></script>
+    <link rel="stylesheet" href="styles/style.css">
+    <script src="https://kit.fontawesome.com/09beb7ae4a.js" crossorigin="anonymous"></script>
+<title>E&E Companion</title>
+</head>
+<body>
+    <input type="file" id="character-sheet-file" onchange="importCharacterSheet()"/>
+    <button onclick="exportCharacterSheet()">&#x1f4be;</button>
+    <h1><input id="character-name"/></h1>
+
+    <table id="hp-mp-table">
+        <tr><th></th><th>Current</th><th>Max</th><th>Temp Max</th><th>EXP</th></tr>
+        <tr>
+            <td>HP</td><td><input type="number" name="HP" class="hp" maxlength="3" onchange="editHandler(event)"/></td>
+            <td name="Max HP" class="hp">0</td>
+            <td><input type="number" name="Temp Max HP" class="hp" maxlength="3" onchange="editHandler(event)"/></td>
+            <td><input type="number" name="HP" class="exp hp" maxlength="3" onchange="editHandler(event)"/></td>
+        </tr>
+        <tr>
+            <td>MP</td><td><input type="number" name="MP" class="mp" maxlength="3" onchange="editHandler(event)"/></td>
+            <td name="Max MP" class="mp">0</td>
+            <td><input type="number" name="Temp Max MP" class="mp" maxlength="3" onchange="editHandler(event)"/></td>
+            <td><input type="number" name="MP" class="exp mp" maxlength="3" onchange="editHandler(event)"/></td>
+        </tr>
+    </table>
+
+    <table id="ability-table">
+        <tr><th>Ability</th><th>Modifier</th></tr>
+        <tr><th>STR</th><th class="ability modifier" name="STR"></th></tr>
+        <tr><th>CON</th><th class="ability modifier" name="DEX"></th></tr>
+        <tr><th>DEX</th><th class="ability modifier" name="CON"></th></tr>
+        <tr><th>INT</th><th class="ability modifier" name="INT"></th></tr>
+        <tr><th>WIS</th><th class="ability modifier" name="WIS"></th></tr>
+        <tr><th>CHA</th><th class="ability modifier" name="CHA"></th></tr>
+    </table>
+    <table id="skill-table">
+        <tr><th>Ability</th><th>Skill</th><th>Bonus</th><th>EXP</th><th>Roll</th></tr>
+    </table>
+
+    <table id="status-table">
+    </table>
+
+    <div id="ability-trees"></div>
+</body>
+<script src="scripts/enchiridion.js"></script>
+<script src="scripts/bootstrapper.js"></script>
+<script src="scripts/character_sheet.js"></script>
+</html>

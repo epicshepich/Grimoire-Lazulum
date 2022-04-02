@@ -1,0 +1,35 @@
+table{
+    border-collapse: collapse;
+}
+
+tr:nth-child(even){
+    background-color: #f2f2f2;
+    /*Alternating color on tables.*/
+}
+
+th{
+    font-weight:bold;
+}
+
+td.skill.ability, td.skill.bonus, td.skill.exp{
+    text-align: center;
+}
+
+td.skill.name{
+    text-align:left;
+}
+
+button > *{
+    pointer-events: none;
+    /*Clicking a button will make the button the target instead of child nodes.*/
+}
+
+input[type="number"]{
+    width:4em;
+    text-align: center;
+}
+
+table#hp-mp-table th{
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}

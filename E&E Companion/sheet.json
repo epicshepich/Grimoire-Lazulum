@@ -1,0 +1,28 @@
+{
+  "name": "Shepich the Epic",
+  "abilities": {
+    "STR": 2,
+    "DEX": -1,
+    "CON": 4,
+    "INT": 1,
+    "WIS": -3,
+    "CHA": 5
+  },
+  "skills": {
+    "Acrobatics": 100,
+    "Investigation": 7,
+    "Recall": 6
+  },
+  "HP": {
+    "current": 10,
+    "EXP": 10
+  },
+  "status": {
+    "Paralyzed": true,
+    "Restrained": true,
+    "Prone": true,
+    "Poisoned": true,
+    "Petrified": true
+  },
+  "backstory": ""
+}

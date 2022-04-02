@@ -1,0 +1,3 @@
+- Continue importing trees
+- Use tree nodes in stat calculations (HP Increase -> Max HP)
+- Use a calculation to limit the ability modifiers to 5
