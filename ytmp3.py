@@ -17,11 +17,12 @@ Requirements:
 """
 import pytube
 import pydub
+from pathvalidate import sanitize_filename
 import shutil
 import tkinter as tk
 import tkinter.filedialog
 from tkinter.ttk import Progressbar
-from pathvalidate import sanitize_filename
+import ctypes
 import threading
 
 
@@ -211,16 +212,15 @@ def ytmp3(url:str,progress=None,output_path=None,merge_playlist=True):
 if __name__ == "__main__":
     #When run as a script, create a GUI tool
     root = tk.Tk()
+    root.geometry("550x30")
+    root.title("YTMP3")
     #Initialize the Tkinter app.
+    #ctypes.windll.shcore.SetProcessDpiAwareness(1)
+    #Use a high-resolution display.
     label = tk.Label(root,text="URL:")
     label.pack(side=tk.LEFT)
-    url_entry = tk.Entry(root,width=75)
-    url_entry.pack()
-
-    to_merge = tk.BooleanVar()
-    #Create a Tkinter variable to track the state of the "merge" checkbox.
-    checkbox = tk.Checkbutton(root,text="Merge",variable=to_merge,onvalue=True,offvalue=False)
-    checkbox.pack()
+    url_entry = tk.Entry(root)
+    url_entry.pack(side=tk.LEFT,expand=1,fill=tk.X)
 
     def _thread_ytmp3():
         """This function runs the download/conversion/merging process in a
@@ -242,5 +242,10 @@ if __name__ == "__main__":
         t.start()
 
     download_button = tk.Button(root,text="Download",command=_thread_ytmp3)
-    download_button.pack()
+    download_button.pack(side=tk.LEFT)
+
+    to_merge = tk.BooleanVar()
+    #Create a Tkinter variable to track the state of the "merge" checkbox.
+    checkbox = tk.Checkbutton(root,text="Merge Playlist",variable=to_merge,onvalue=True,offvalue=False)
+    checkbox.pack(side=tk.LEFT)
     tk.mainloop()
