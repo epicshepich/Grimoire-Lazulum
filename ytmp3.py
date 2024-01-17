@@ -79,7 +79,7 @@ class Progress:
             mode - a string indicating which type of progress bar to render;
                 either "determinate" or "indeterminate"
         """
-        self.bars[mode].pack(fill=tk.X,expand=1)
+        self.bars[mode].pack(side=tk.BOTTOM,fill=tk.X,expand=1)
         #Add the desired progress bar to the app layout, and let it expand to
         #fit the width of the window.
         self.is_packed[mode] = True
@@ -202,7 +202,14 @@ def ytmp3(url:str,progress=None,output_path=None,merge_playlist=True):
             #When downloading a single file, there is not a great way to
             #quantitatively track it's progress, so just use an indeterminate
             #progress bar.
-        download_mp3(pytube.YouTube(url),output_path=output_path)
+        download_mp3(
+            pytube.YouTube(
+                url,
+                use_oauth = False,
+                allow_oauth_cache = False
+            ),
+            output_path=output_path
+        )
 
     if progress is not None:
         progress.hide_progressbar()
